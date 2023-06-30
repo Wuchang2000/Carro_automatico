@@ -3,7 +3,7 @@ import pygame
 
 
 class Sensores:
-    def __init__(self, carro, surface, road, trafico):
+    def __init__(self, carro, surface, road):
         self.carro = carro
         self.surface = surface
         self.num_sensores = 3
@@ -12,7 +12,6 @@ class Sensores:
         self.sensores = []
         self.toques = []
         self.road = road
-        # self.trafico = trafico
 
     def Update(self, angulo):
         self.sensores = []
@@ -36,14 +35,6 @@ class Sensores:
             borders[i][0], borders[i][1])
             if toque:
                 toques.append(toque)
-        # for k in self.trafico:
-        #     poligono = k.Poligono()
-        #     for i in range(len(poligono)):
-        #         toque = self.Interseccion(
-        #             poligono[i], poligono[(i+1)%len(poligono)],
-        #             sensores[0], sensores[1])
-        #         if toque:
-        #             toques.append(toque)
 
         if len(toques) == 0:
             return None

@@ -45,18 +45,12 @@ class Carro:
         self.puntos.append([x-math.sin(math.pi+self.angulo+alpha)*rad, y-math.cos(math.pi+self.angulo+alpha)*rad])
         return self.puntos
 
-    def assessDamage(self, borders, trafico):
+    def assessDamage(self, borders):
         choques = []
         for i in range(len(borders)):
             if self.interseccionPol(self.Poligono(), borders[i]):
                 choques.append(True)
-        # for i in trafico:
-        #     if self.interseccionPol(self.Poligono(), i.Poligono()):
-        #         choques.append(True)
-        if True in choques:
-            return True
-        else:
-            return False
+                return True
     
     def interseccionPol(self, poligono, borders):
         for i in range(len(poligono)):
@@ -86,11 +80,10 @@ class Carro:
     def Lerp(self, start, end, t):
         return ((1-t)*start)+(t*end)
     
-    def UpdateCoords(self, x, road, velocidad, trafico):
+    def UpdateCoords(self, x, road, velocidad):
         if self.tipo == 'USER':
             self.x = x-self.shape.get_width()/2
-            # self.y = y-self.shape.get_width()/2
-            self.damage = self.assessDamage(road.borders, trafico)
+            self.damage = self.assessDamage(road.borders)
         else:
             self.velocidad += -1*(self.max_speed*0.1)
             if self.velocidad <= -1*self.max_speed:

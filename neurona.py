@@ -14,15 +14,19 @@ class Cerebro:
     
     def predice(self, entradas):
         prediccion = self.modelo.predict(entradas)
+        prediccion = prediccion[0]
         #Saber si gira a derecha o izquierda
-        if prediccion[0] >= prediccion[2]:
+        if prediccion[0] >= 0.5:
             prediccion[0] = 1
             prediccion[2] = 0
-        else:
+        elif prediccion[2] >= 0.5:
             prediccion[0] = 0
             prediccion[2] = 1
+        else:
+            prediccion[0] = 0
+            prediccion[2] = 0
         #Saber si acelera o no
-        if prediccion[1] >= 5:
+        if prediccion[1] >= 0.5:
             prediccion[1] = 1
         else:
             prediccion[1] = 0
