@@ -43,27 +43,24 @@ genetico.crea_poblacion()
 while True:
 
     time = clock.tick(60)/10
+    
+    carros_ordenados = sorted(genetico.carros, key=lambda item: item[6])
+    if len(carros_ordenados) == 0:
+        
 
     for event in pygame.event.get():
 
         if event.type == pygame.QUIT:
             sys.exit()
 
-    #     if event.type == pygame.KEYDOWN:
-    #         if event.key == pygame.K_UP:
-    #             aceleracion = -0.2
-    #         elif event.key == pygame.K_DOWN:
-    #             aceleracion = 0.2
-    #         elif event.key == pygame.K_RIGHT:
-    #             angulo -= 0.05
-    #         elif event.key == pygame.K_LEFT:
-    #             angulo += 0.05
-    #     elif event.type == pygame.KEYUP:
-    #         if event.key in (pygame.K_UP, pygame.K_DOWN):
-    #             aceleracion = 0
+    carros_no_chocados = []
+    for i in range(len(carros_ordenados)):
+        if carros_ordenados[i][0].damage != True:
+            carros_no_chocados.append(carros_ordenados[i])
+    carros_ordenados = carros_no_chocados.copy()
     
     citizen = 0
-    for i in genetico.carros:
+    for i in carros_ordenados:
         prediccion = genetico.poblacion[citizen].predice([[random.randint(0,7) for _ in range(6)]])
         if prediccion[1] == 1:
             i[4] = -0.2
@@ -81,10 +78,11 @@ while True:
         i[2] += math.sin(i[5])*i[3]
 
         i[0].UpdateCoords(i[2], road, 0)
+        
+        if citizen == 0:
+            road.UpdateCoords(i[3], time)
 
-        road.UpdateCoords(i[3], time)
-
-        road.Show(screen)
+            road.Show(screen)
         
         if i[5] == 0:
             i[0].Show(screen, i[5])
