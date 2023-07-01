@@ -45,19 +45,24 @@ while True:
     time = clock.tick(60)/10
     
     carros_ordenados = sorted(genetico.carros, key=lambda item: item[6])
-    if len(carros_ordenados) == 0:
-        
-
-    for event in pygame.event.get():
-
-        if event.type == pygame.QUIT:
-            sys.exit()
-
     carros_no_chocados = []
     for i in range(len(carros_ordenados)):
         if carros_ordenados[i][0].damage != True:
             carros_no_chocados.append(carros_ordenados[i])
     carros_ordenados = carros_no_chocados.copy()
+    if len(carros_ordenados) == 0:
+        for i in range(num_poblacion):
+            carro = Carro(screenheight, screenwidth, False, 'USER', max_speed, "carro.png")
+            sensor = Sensores(carro, screen, road)
+            carros.append([carro, sensor, carro.x, velocidad, aceleracion, angulo, 0])
+
+        genetico = Genetico(num_poblacion, num_generaciones, carros)
+        genetico.crea_poblacion()
+
+    for event in pygame.event.get():
+
+        if event.type == pygame.QUIT:
+            sys.exit()
     
     citizen = 0
     for i in carros_ordenados:
