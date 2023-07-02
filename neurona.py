@@ -1,5 +1,7 @@
 from tensorflow.keras.layers import Dense
 from tensorflow.keras import Sequential
+import tensorflow as tf
+from numpy import array, float32
 
 #Variables: 3 sensores, posicion (x,y), velocidad
 #Salidas: derecha, adelante, izquierda
@@ -8,12 +10,19 @@ class Cerebro:
 
     def __init__(self):
         entrada = Dense(units=6, input_shape=(6,))
-        oculta = Dense(units=12, activation='relu')
+        oculta = Dense(units=6, activation='relu')
         salida = Dense(units=3, activation='sigmoid')
         self.modelo = Sequential([entrada, oculta, salida])
+        converter = tf.lite.TFLiteConverter.from_keras_model(self.modelo)
+        tflite_model = converter.convert()
+        self.interprete = tf.lite.Interpreter(model_content=tflite_model)
+        self.interprete.allocate_tensors()
     
     def predice(self, entradas):
-        prediccion = self.modelo.predict(entradas)
+        entradas = array(entradas).astype(float32)
+        self.interprete.set_tensor(self.interprete.get_input_details()[0]["index"], entradas)
+        self.interprete.invoke()
+        prediccion = self.interprete.get_tensor(self.interprete.get_output_details()[0]["index"])
         prediccion = prediccion[0]
         #Saber si gira a derecha o izquierda
         if prediccion[0] >= 0.5:

@@ -15,7 +15,7 @@ screenwidth, screenheight = (480, 640)
 
 screen = pygame.display.set_mode((screenwidth, screenheight))
 
-num_poblacion = 2
+num_poblacion = 16
 num_generaciones = 1
 carros = []
 
@@ -49,15 +49,19 @@ while True:
     for i in range(len(carros_ordenados)):
         if carros_ordenados[i][0].damage != True:
             carros_no_chocados.append(carros_ordenados[i])
-    carros_ordenados = carros_no_chocados.copy()
+    carros_ordenados = carros_no_chocados
     if len(carros_ordenados) == 0:
-        for i in range(num_poblacion):
-            carro = Carro(screenheight, screenwidth, False, 'USER', max_speed, "carro.png")
-            sensor = Sensores(carro, screen, road)
-            carros.append([carro, sensor, carro.x, velocidad, aceleracion, angulo, 0])
+        num_generaciones -= 1
+        if num_generaciones != 0:
+            for i in range(num_poblacion):
+                carro = Carro(screenheight, screenwidth, False, 'USER', max_speed, "carro.png")
+                sensor = Sensores(carro, screen, road)
+                carros.append([carro, sensor, carro.x, velocidad, aceleracion, angulo, 0])
 
-        genetico = Genetico(num_poblacion, num_generaciones, carros)
-        genetico.crea_poblacion()
+            genetico = Genetico(num_poblacion, num_generaciones, carros)
+            genetico.crea_poblacion()
+        else:
+            sys.exit()
 
     for event in pygame.event.get():
 
@@ -67,6 +71,7 @@ while True:
     citizen = 0
     for i in carros_ordenados:
         prediccion = genetico.poblacion[citizen].predice([[random.randint(0,7) for _ in range(6)]])
+        # prediccion = [random.randint(0,1) for _ in range(3)]
         if prediccion[1] == 1:
             i[4] = -0.2
         else:
