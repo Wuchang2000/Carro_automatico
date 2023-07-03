@@ -61,6 +61,8 @@ while True:
     carros_no_chocados = []
     for i in range(len(carros_ordenados)):
         if carros_ordenados[i][0].damage != True and abs(carros_ordenados[i][5]) < 5:
+            if len(carros_no_chocados) == 0:
+                carros_ordenados[i][0].y = screenheight-carros_ordenados[i][0].shape.get_height()-25
             carros_no_chocados.append(carros_ordenados[i])
     carros_ordenados = carros_no_chocados
     if len(carros_ordenados) == 0:
@@ -85,8 +87,10 @@ while True:
     for i in carros_ordenados:
         i[1].Show(i[5])
         prediccion = genetico.poblacion[citizen].predice(obten_parametros(i))
-        if prediccion[1] == 1:
+        if prediccion[1] == 1 and abs(angulo) <= 1.55:
             i[4] = -0.2
+        elif prediccion[1] == 1:
+            i[4] += 0.2
         else:
             i[4] = 0
         if prediccion[0] == 1:
@@ -112,7 +116,6 @@ while True:
         else:
             i[0].Rotate(screen, i[5])
 
-        print(prediccion)
         i[1].Show(i[5])
         citizen += 1
 
