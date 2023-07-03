@@ -3,7 +3,7 @@ from tensorflow.keras import Sequential
 import tensorflow as tf
 from numpy import array, float32
 
-#Variables: 3 sensores, posicion (x,y), velocidad
+#Variables: 3 sensores, posicion x, angulo, velocidad
 #Salidas: derecha, adelante, izquierda
 
 class Cerebro:

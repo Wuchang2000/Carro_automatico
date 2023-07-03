@@ -15,7 +15,7 @@ screenwidth, screenheight = (480, 640)
 
 screen = pygame.display.set_mode((screenwidth, screenheight))
 
-num_poblacion = 16
+num_poblacion = 5
 num_generaciones = 1
 carros = []
 
@@ -35,19 +35,32 @@ for i in range(num_poblacion):
     if i == 0:
         road = Mapa(carro.y, screenheight, "road.png")
     sensor = Sensores(carro, screen, road)
-    carros.append([carro, sensor, carro.x, velocidad, aceleracion, angulo, 0])
+    carros.append([carro, sensor, carro.x, velocidad, aceleracion, angulo])
 
 genetico = Genetico(num_poblacion, num_generaciones, carros)
 genetico.crea_poblacion()
+
+def obten_parametros(carro):
+    parametros = []
+    for distancia in carro[1].toques:
+        if distancia == None:
+            parametros.append(1)
+        else:
+            parametros.append(distancia[0][2])
+    parametros.append(carro[0].x/screenwidth)
+    parametros.append(abs(carro[5])/5)
+    parametros.append(abs(carro[3])/max_speed)
+    return [parametros]
+
 
 while True:
 
     time = clock.tick(60)/10
     
-    carros_ordenados = sorted(genetico.carros, key=lambda item: item[6])
+    carros_ordenados = sorted(genetico.carros, key=lambda item: item[3])
     carros_no_chocados = []
     for i in range(len(carros_ordenados)):
-        if carros_ordenados[i][0].damage != True:
+        if carros_ordenados[i][0].damage != True and abs(carros_ordenados[i][5]) < 5:
             carros_no_chocados.append(carros_ordenados[i])
     carros_ordenados = carros_no_chocados
     if len(carros_ordenados) == 0:
@@ -56,7 +69,7 @@ while True:
             for i in range(num_poblacion):
                 carro = Carro(screenheight, screenwidth, False, 'USER', max_speed, "carro.png")
                 sensor = Sensores(carro, screen, road)
-                carros.append([carro, sensor, carro.x, velocidad, aceleracion, angulo, 0])
+                carros.append([carro, sensor, carro.x, velocidad, aceleracion, angulo])
 
             genetico = Genetico(num_poblacion, num_generaciones, carros)
             genetico.crea_poblacion()
@@ -70,8 +83,8 @@ while True:
     
     citizen = 0
     for i in carros_ordenados:
-        prediccion = genetico.poblacion[citizen].predice([[random.randint(0,7) for _ in range(6)]])
-        # prediccion = [random.randint(0,1) for _ in range(3)]
+        i[1].Show(i[5])
+        prediccion = genetico.poblacion[citizen].predice(obten_parametros(i))
         if prediccion[1] == 1:
             i[4] = -0.2
         else:
@@ -99,6 +112,7 @@ while True:
         else:
             i[0].Rotate(screen, i[5])
 
+        print(prediccion)
         i[1].Show(i[5])
         citizen += 1
 
