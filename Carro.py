@@ -80,19 +80,18 @@ class Carro:
     def Lerp(self, start, end, t):
         return ((1-t)*start)+(t*end)
     
-    def UpdateCoords(self, x, road, velocidad):
+    def UpdateCoords(self, x, road, velocidad_ref, velocidad):
         if self.tipo == 'USER':
             self.x = x-self.shape.get_width()/2
             self.damage = self.assessDamage(road.borders)
         else:
-            self.velocidad += -1*(self.max_speed*0.1)
-            if self.velocidad <= -1*self.max_speed:
-                self.velocidad = self.Fisicas(self.velocidad, 0, 0.15)
-            
-            if velocidad <= self.velocidad:
-                self.y -= -1*abs(self.velocidad-velocidad)
+            self.velocidad = velocidad
+            self.x = x-self.shape.get_width()/2
+            if velocidad_ref <= self.velocidad:
+                self.y -= -1*abs(self.velocidad-velocidad_ref)
             else:
-                self.y += self.velocidad+(-1*velocidad)
+                self.y += self.velocidad+(-1*velocidad_ref)
+            self.damage = self.assessDamage(road.borders)
 
     def Fisicas(self, velocidad, aceleracion, friccion):
         if abs(velocidad) >= self.max_speed:

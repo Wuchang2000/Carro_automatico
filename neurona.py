@@ -10,7 +10,7 @@ class Cerebro:
 
     def __init__(self):
         entrada = Dense(units=6, input_shape=(6,))
-        oculta = Dense(units=6, activation='relu')
+        oculta = Dense(units=12, activation='relu')
         salida = Dense(units=3, activation='sigmoid')
         self.modelo = Sequential([entrada, oculta, salida])
         converter = tf.lite.TFLiteConverter.from_keras_model(self.modelo)
@@ -42,5 +42,8 @@ class Cerebro:
 
         return prediccion
     
-    def actualiza_pesos(self, weights):
-        self.modelo.set_weights(weights)
+    def nuevo_interprete(self):
+        converter = tf.lite.TFLiteConverter.from_keras_model(self.modelo)
+        tflite_model = converter.convert()
+        self.interprete = tf.lite.Interpreter(model_content=tflite_model)
+        self.interprete.allocate_tensors()
