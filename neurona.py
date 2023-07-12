@@ -8,15 +8,19 @@ from numpy import array, float32
 
 class Cerebro:
 
-    def __init__(self):
-        entrada = Dense(units=6, input_shape=(6,))
-        oculta = Dense(units=12, activation='relu')
-        salida = Dense(units=3, activation='sigmoid')
-        self.modelo = Sequential([entrada, oculta, salida])
-        converter = tf.lite.TFLiteConverter.from_keras_model(self.modelo)
-        tflite_model = converter.convert()
-        self.interprete = tf.lite.Interpreter(model_content=tflite_model)
-        self.interprete.allocate_tensors()
+    def __init__(self, carga = False):
+        if carga:
+            self.usar_modelo()
+            self.nuevo_interprete()
+        else:
+            entrada = Dense(units=6, input_shape=(6,))
+            oculta = Dense(units=3, activation='relu')
+            salida = Dense(units=3, activation='sigmoid')
+            self.modelo = Sequential([entrada, oculta, salida])
+            converter = tf.lite.TFLiteConverter.from_keras_model(self.modelo)
+            tflite_model = converter.convert()
+            self.interprete = tf.lite.Interpreter(model_content=tflite_model)
+            self.interprete.allocate_tensors()
     
     def predice(self, entradas):
         entradas = array(entradas).astype(float32)
@@ -47,3 +51,9 @@ class Cerebro:
         tflite_model = converter.convert()
         self.interprete = tf.lite.Interpreter(model_content=tflite_model)
         self.interprete.allocate_tensors()
+    
+    def exporta(self):
+        self.modelo.save('best_model.h5')
+
+    def usar_modelo(self):
+        self.modelo = tf.keras.models.load_model('best_model.h5')

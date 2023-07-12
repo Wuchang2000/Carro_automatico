@@ -1,7 +1,6 @@
 import math
 import pygame
 import sys
-import random
 from Carro import Carro
 from Mapa import Mapa
 from Sensores import Sensores
@@ -15,7 +14,7 @@ screenwidth, screenheight = (480, 640)
 
 screen = pygame.display.set_mode((screenwidth, screenheight))
 
-num_poblacion = 30
+num_poblacion = 16
 num_generaciones = 10
 carros = []
 
@@ -101,6 +100,7 @@ while True:
             genetico.selecciona_mejores(carros)
             carros_ordenados = sorted(genetico.carros, key=lambda item: item[6])
         else:
+            genetico.exportaMejor()
             sys.exit()
 
     for event in pygame.event.get():

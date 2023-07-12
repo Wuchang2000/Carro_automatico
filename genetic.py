@@ -7,6 +7,7 @@ class Genetico:
         self.poblacion = []
         self.carros = carros
         self.generaciones = num_generaciones
+        self.mejor = None
     
     def crea_poblacion(self):
         for i in range(self.num_poblacion):
@@ -14,6 +15,8 @@ class Genetico:
     
     def selecciona_mejores(self, carros):
         self.carros = sorted(self.carros, key=lambda item: item[6])
+        if self.mejor == None or self.mejor[0][6] < self.carros[0][6]:
+            self.mejor = [self.carros[0], self.poblacion[self.carros[0][8]]]
         for i in range(0, self.num_poblacion, 2):
             self.mezcla(self.poblacion[self.carros[i][8]], self.poblacion[self.carros[i+1][8]])
         self.carros = carros
@@ -27,7 +30,7 @@ class Genetico:
             mitad1 = np.shape(pesos_p1)[0]
             mitad2 = np.shape(pesos_p1)[1]
             salida = np.shape(padre1.modelo.layers[i].get_weights()[1])[0]
-            indice1 = np.random.randint(0, mitad1-2)
+            indice1 = np.random.randint(round(mitad1/2)-1, mitad1-1)
             indice2 = mitad1-indice1
             mitad1_nuevo_peso1 = pesos_p1[:indice1, :]
             mitad2_nuevo_peso1 = pesos_p1[indice1:, :]
@@ -59,3 +62,6 @@ class Genetico:
                         elemento = np.random.uniform(-1.0, 1.0)
         
         return hijo1, hijo2
+    
+    def exportaMejor(self):
+        self.mejor[1].exporta()
